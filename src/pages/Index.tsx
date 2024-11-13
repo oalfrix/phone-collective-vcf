@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import ContactForm from "@/components/ContactForm";
 import ContactList from "@/components/ContactList";
@@ -11,29 +10,14 @@ interface Contact {
   approved?: boolean;
 }
 
-const Index = () => {
-  const [contacts, setContacts] = useState<Contact[]>([]);
-  const [downloadEnabled, setDownloadEnabled] = useState(false);
+interface IndexProps {
+  contacts: Contact[];
+  onAddContact: (name: string, phone: string) => void;
+  downloadEnabled: boolean;
+}
+
+const Index = ({ contacts, onAddContact, downloadEnabled }: IndexProps) => {
   const { isAdmin } = useAdmin();
-
-  const handleAddContact = (name: string, phone: string) => {
-    setContacts([...contacts, { name, phone, approved: false }]);
-  };
-
-  const handleApprove = (index: number) => {
-    const newContacts = [...contacts];
-    newContacts[index].approved = true;
-    setContacts(newContacts);
-  };
-
-  const handleReject = (index: number) => {
-    const newContacts = contacts.filter((_, i) => i !== index);
-    setContacts(newContacts);
-  };
-
-  const handleEnableDownload = () => {
-    setDownloadEnabled(true);
-  };
 
   const approvedContacts = contacts.filter((contact) => contact.approved);
 
@@ -50,7 +34,7 @@ const Index = () => {
           
           <div className="flex flex-col items-center gap-8 md:flex-row md:items-start md:justify-center">
             <div className="w-full md:w-1/2">
-              <ContactForm onSubmit={handleAddContact} />
+              <ContactForm onSubmit={onAddContact} />
               {!isAdmin && (
                 <div className="mt-8">
                   <Link to="/admin">
