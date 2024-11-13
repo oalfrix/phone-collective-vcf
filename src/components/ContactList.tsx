@@ -5,18 +5,20 @@ import { Download } from "lucide-react";
 interface Contact {
   name: string;
   phone: string;
+  approved?: boolean;
 }
 
 interface ContactListProps {
   contacts: Contact[];
+  downloadEnabled?: boolean;
 }
 
-const ContactList = ({ contacts }: ContactListProps) => {
+const ContactList = ({ contacts, downloadEnabled }: ContactListProps) => {
   return (
     <div className="w-full max-w-md space-y-4 animate-fadeIn">
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold">Contacts ({contacts.length})</h2>
-        {contacts.length > 0 && (
+        <h2 className="text-xl font-semibold">Approved Contacts ({contacts.length})</h2>
+        {contacts.length > 0 && downloadEnabled && (
           <Button
             onClick={() => downloadVCF(contacts)}
             variant="outline"

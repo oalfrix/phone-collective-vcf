@@ -1,18 +1,41 @@
 import { useState } from "react";
 import ContactForm from "@/components/ContactForm";
 import ContactList from "@/components/ContactList";
+import AdminLogin from "@/components/AdminLogin";
+import AdminPanel from "@/components/AdminPanel";
+import { AdminProvider, useAdmin } from "@/contexts/AdminContext";
 
 interface Contact {
   name: string;
   phone: string;
+  approved?: boolean;
 }
 
-const Index = () => {
+const IndexContent = () => {
   const [contacts, setContacts] = useState<Contact[]>([]);
+  const [downloadEnabled, setDownloadEnabled] = useState(false);
+  const { isAdmin } = useAdmin();
 
   const handleAddContact = (name: string, phone: string) => {
-    setContacts([...contacts, { name, phone }]);
+    setContacts([...contacts, { name, phone, approved: false }]);
   };
+
+  const handleApprove = (index: number) => {
+    const newContacts = [...contacts];
+    newContacts[index].approved = true;
+    setContacts(newContacts);
+  };
+
+  const handleReject = (index: number) => {
+    const newContacts = contacts.filter((_, i) => i !== index);
+    setContacts(newContacts);
+  };
+
+  const handleEnableDownload = () => {
+    setDownloadEnabled(true);
+  };
+
+  const approvedContacts = contacts.filter((contact) => contact.approved);
 
   return (
     <div className="min-h-screen bg-background">
@@ -28,9 +51,25 @@ const Index = () => {
           <div className="flex flex-col items-center gap-8 md:flex-row md:items-start md:justify-center">
             <div className="w-full md:w-1/2">
               <ContactForm onSubmit={handleAddContact} />
+              {!isAdmin && (
+                <div className="mt-8">
+                  <AdminLogin />
+                </div>
+              )}
             </div>
-            <div className="w-full md:w-1/2">
-              <ContactList contacts={contacts} />
+            <div className="w-full md:w-1/2 space-y-8">
+              {isAdmin && (
+                <AdminPanel
+                  contacts={contacts}
+                  onApprove={handleApprove}
+                  onReject={handleReject}
+                  onEnableDownload={handleEnableDownload}
+                />
+              )}
+              <ContactList
+                contacts={approvedContacts}
+                downloadEnabled={downloadEnabled}
+              />
             </div>
           </div>
         </div>
@@ -38,5 +77,11 @@ const Index = () => {
     </div>
   );
 };
+
+const Index = () => (
+  <AdminProvider>
+    <IndexContent />
+  </AdminProvider>
+);
 
 export default Index;
