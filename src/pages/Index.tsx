@@ -1,9 +1,9 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import ContactForm from "@/components/ContactForm";
 import ContactList from "@/components/ContactList";
-import AdminLogin from "@/components/AdminLogin";
-import AdminPanel from "@/components/AdminPanel";
-import { AdminProvider, useAdmin } from "@/contexts/AdminContext";
+import { Button } from "@/components/ui/button";
+import { useAdmin } from "@/contexts/AdminContext";
 
 interface Contact {
   name: string;
@@ -11,7 +11,7 @@ interface Contact {
   approved?: boolean;
 }
 
-const IndexContent = () => {
+const Index = () => {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [downloadEnabled, setDownloadEnabled] = useState(false);
   const { isAdmin } = useAdmin();
@@ -53,19 +53,15 @@ const IndexContent = () => {
               <ContactForm onSubmit={handleAddContact} />
               {!isAdmin && (
                 <div className="mt-8">
-                  <AdminLogin />
+                  <Link to="/admin">
+                    <Button variant="outline" className="w-full">
+                      Admin Login
+                    </Button>
+                  </Link>
                 </div>
               )}
             </div>
-            <div className="w-full md:w-1/2 space-y-8">
-              {isAdmin && (
-                <AdminPanel
-                  contacts={contacts}
-                  onApprove={handleApprove}
-                  onReject={handleReject}
-                  onEnableDownload={handleEnableDownload}
-                />
-              )}
+            <div className="w-full md:w-1/2">
               <ContactList
                 contacts={approvedContacts}
                 downloadEnabled={downloadEnabled}
@@ -77,11 +73,5 @@ const IndexContent = () => {
     </div>
   );
 };
-
-const Index = () => (
-  <AdminProvider>
-    <IndexContent />
-  </AdminProvider>
-);
 
 export default Index;
