@@ -4,20 +4,7 @@ import AdminLogin from "@/components/AdminLogin";
 import AdminPanel from "@/components/AdminPanel";
 import { useAdmin } from "@/contexts/AdminContext";
 
-interface Contact {
-  name: string;
-  phone: string;
-  approved?: boolean;
-}
-
-interface AdminProps {
-  contacts: Contact[];
-  onApprove: (index: number) => void;
-  onReject: (index: number) => void;
-  onEnableDownload: () => void;
-}
-
-const Admin = ({ contacts, onApprove, onReject, onEnableDownload }: AdminProps) => {
+const Admin = () => {
   const { isAdmin } = useAdmin();
   const navigate = useNavigate();
 
@@ -43,10 +30,10 @@ const Admin = ({ contacts, onApprove, onReject, onEnableDownload }: AdminProps) 
               <AdminLogin />
             ) : (
               <AdminPanel
-                contacts={contacts}
-                onApprove={onApprove}
-                onReject={onReject}
-                onEnableDownload={onEnableDownload}
+                contacts={[]}
+                onApprove={() => {}}
+                onReject={() => {}}
+                onEnableDownload={() => {}}
               />
             )}
           </div>
